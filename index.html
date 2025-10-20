@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eğitmen | Siber Güvenlik Eğitimleri</title>
+  <meta name="description" content="Siber güvenlik uzmanı ve eğitmen. Etik hacker eğitimleri, hands-on lab içerikleri ve ileri seviye pratikler." />
+  <meta name="theme-color" content="#11ff88" />
+
+  <meta property="og:title" content="Siber Güvenlik Eğitimleri" />
+  <meta property="og:description" content="Hacker temalı, neon koyu arayüz. Eğitimlerimi keşfet ve Udemy sayfalarına git." />
+  <meta property="og:type" content="website" />
+  <script src="https://cdn.counter.dev/script.js" data-id="23d4f767-e4e2-41b7-b7a8-c66c3e49560d" data-utcoffset="3"></script>
+  
+  <link rel="icon"
+      href="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/favicon/favicon.ico"
+      type="image/x-icon"
+      sizes="any">
+
+
+  <style>
+    :root {
+      --bg: #0a0f0a;           
+      --bg-soft: #0e1511;
+      --fg: #d8fbe2;           
+      --muted: #8bc7a1;
+      --accent: #39ff14;        
+      --accent-2: #00e5ff;      
+      --accent-3: #ff2bd6;      
+      --card: #0b120e;
+      --card-border: rgba(57,255,20,0.25);
+      --glow: 0 0 18px rgba(57,255,20,.28), 0 0 3px rgba(0,229,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: var(--fg);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    #matrix { position: fixed; inset: 0; z-index: -3; opacity: .12; }
+
+    .grid-bg::before, .grid-bg::after {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: -2;
+      background:
+        linear-gradient(rgba(57,255,20,0.06) 1px, transparent 1px) 0 0 / 24px 24px,
+        linear-gradient(90deg, rgba(57,255,20,0.06) 1px, transparent 1px) 0 0 / 24px 24px;
+      transform: translateZ(0);
+      animation: drift 60s linear infinite; /* yavaşlatıldı */
+      will-change: transform;
+    }
+    .grid-bg::after { 
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(0,229,255,0.08), transparent 35%),
+        radial-gradient(ellipse at 80% 70%, rgba(255,43,214,0.06), transparent 40%);
+      z-index: -4;
+      animation: drift 90s linear infinite reverse; /* ekstra katman */
+    }
+    @keyframes drift { to { transform: translate3d(-24px, -24px, 0); } }
+
+    /* Scanline overlay */
+    .scanlines::before{
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background: repeating-linear-gradient(
+        to bottom, rgba(0,0,0,0), rgba(0,0,0,0) 2px, rgba(0,0,0,0.07) 3px
+      );
+      mix-blend-mode: multiply;
+    }
+
+    .nav {
+      position: sticky; top: 0; width: 100%;
+      background: linear-gradient( to bottom, rgba(11,18,14,0.85), rgba(11,18,14,0.55) );
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--card-border);
+      box-shadow: var(--glow);
+      z-index: 20;
+    }
+    .navInner { max-width: 1100px; margin: 0 auto; padding: 12px 20px; display:flex; align-items:center; gap: 16px; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
+    .brand .dot { width:10px; height:10px; border-radius:50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1.25s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: .3 } }
+    .brand span { color: var(--fg); }
+    .prompt {
+      margin-left: auto; display:flex; align-items:center; gap:10px; padding:6px 10px;
+      background: #07100a; border:1px solid var(--card-border); border-radius: 12px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
+      color: var(--muted); font-size: 13px; opacity:.95
+    }
+    .prompt b { color: var(--accent); font-weight:600 }
+    .nav a {
+      text-decoration: none; color: var(--fg); font-size: 14px; opacity:.9; position: relative;
+      padding: 6px 10px; border-radius: 10px; transition: .25s ease;
+    }
+    .nav a:hover { background: rgba(57,255,20,0.08); box-shadow: var(--glow); }
+    .socialBtn { margin-left: 6px; border:1px dashed rgba(0,229,255,.45); padding:6px 10px; border-radius:10px; cursor:pointer }
+
+    /* LAYOUT */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+    .hero { display:grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items:center; padding-top: 22px; }
+    .hero h1 { font-size: clamp(28px, 4vw, 48px); margin:0 0 10px; letter-spacing:.5px; }
+    .hero p { color: var(--muted); margin: 0 0 18px; }
+
+    .termBox { background: var(--card); border:1px solid var(--card-border); border-radius: 16px; box-shadow: var(--glow); overflow:hidden; }
+    .termHead { display:flex; align-items:center; gap: 8px; padding: 10px 12px; border-bottom:1px solid var(--card-border); background: linear-gradient( to bottom, rgba(0,229,255,0.05), rgba(57,255,20,0.04) ); }
+    .dotR, .dotY, .dotG { width:10px; height:10px; border-radius:50%; }
+    .dotR{ background:#ff5f57 } .dotY{ background:#ffbd2e } .dotG{ background:#28c840 }
+    .termBody { padding: 16px 16px 18px; font-size: 14px; color: var(--muted); }
+
+    .type { color: var(--accent); border-right: 2px solid var(--accent); white-space: nowrap; overflow: hidden; display:inline-block }
+
+    /* COURSES */
+    .section { margin-top: 54px }
+    .section h2 { margin: 0 0 14px; font-size: clamp(20px, 3vw, 28px) }
+    .courses { display:grid; grid-template-columns: repeat( auto-fit, minmax(260px, 1fr) ); gap: 18px; }
+    .card { position:relative; background: linear-gradient(180deg, #0c1611, #0b120e 60%); border:1px solid var(--card-border); border-radius: 16px; padding: 14px; box-shadow: var(--glow); transition: transform .2s ease, box-shadow .2s ease; cursor: pointer; overflow:hidden }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 0 28px rgba(57,255,20,.22); }
+    .card h3 { margin: 6px 0 6px; font-size: 18px }
+    .card p { margin: 0 0 12px; color: var(--muted); font-size: 14px }
+    .badge { display:inline-block; font-size: 12px; padding: 4px 8px; border-radius: 999px; border:1px solid var(--card-border); margin-right: 6px; opacity:.9 }
+    .thumb { position:relative; height: 148px; border-radius: 12px; overflow:hidden; border:1px solid rgba(0,229,255,.18); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display:block; filter: saturate(1.05) contrast(1.1); transform: scale(1.02); transition: transform .6s ease; }
+    .card:hover .thumb img { transform: scale(1.08); }
+    .card::after{ /* neon sweep */
+      content:""; position:absolute; inset:0; background: linear-gradient(120deg, transparent, rgba(57,255,20,.08), transparent);
+      transform: translateX(-120%); animation: sweep 5s linear infinite; pointer-events:none;
+    }
+    @keyframes sweep { 50%{ transform: translateX(120%) } 100%{ transform: translateX(120%) } }
+
+    .ctaRow { display:flex; gap:10px; align-items:center; justify-content: flex-start; flex-wrap: wrap }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding: 10px 12px; border-radius: 12px; text-decoration:none; color: var(--bg); background: var(--accent); font-weight:700; border:1px solid rgba(0,0,0,.25); box-shadow: 0 6px 14px rgba(57,255,20,.22); }
+    .btn.secondary { background: transparent; color: var(--accent-2); border:1px solid rgba(0,229,255,.35) }
+    .btn svg { width: 16px; height: 16px }
+
+    /* === MODALS (BASE) === */
+    .socialPanel, .contactPanel, .servicesPanel { /* ADDED: .servicesPanel */
+      position: fixed; left: 50%; top: 52%;
+      width: min(92vw, 420px);
+      background: radial-gradient(120% 120% at 10% 10%, rgba(0,229,255,.06), transparent 40%),
+                  radial-gradient(140% 140% at 90% 90%, rgba(255,43,214,.05), transparent 45%),
+                  #08120d;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 28px 80px rgba(57,255,20,.25), 0 10px 24px rgba(0,229,255,.15);
+      transform: translate(-50%,-50%) scale(.88) rotateX(10deg);
+      opacity: 0; z-index: 1001;
+      transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .55s ease;
+      transform-style: preserve-3d;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .socialPanel::before, .contactPanel::before, .servicesPanel::before { /* ADDED: .servicesPanel::before */
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        linear-gradient(rgba(57,255,20,0.07) 1px, transparent 1px) 0 0/16px 16px,
+        linear-gradient(90deg, rgba(57,255,20,0.07) 1px, transparent 1px) 0 0/16px 16px;
+      mix-blend-mode: screen; opacity: .45; transform: translateZ(30px);
+    }
+    .socialPanel::after, .contactPanel::after, .servicesPanel::after { /* ADDED: .servicesPanel::after */
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.04) 2px, transparent 3px);
+      opacity: .12;
+    }
+    .socialPanel.open, .contactPanel.open, .servicesPanel.open { /* ADDED: .servicesPanel.open */
+      transform: translate(-50%,-50%) scale(1) rotateX(0deg);
+      opacity: 1; animation: neonPulse 2.2s ease-out 1;
+      pointer-events: auto;
+    }
+    @keyframes neonPulse {
+      0%   { box-shadow: 0 0 0 rgba(57,255,20,0); }
+      30%  { box-shadow: 0 0 46px rgba(57,255,20,.45), 0 0 16px rgba(0,229,255,.28); }
+      100% { box-shadow: 0 28px 80px rgba(57,255,20,.25), 0 10px 24px rgba(0,229,255,.15); }
+    }
+
+    .socialHead {
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding: 6px 8px 10px; border-bottom:1px solid var(--card-border);
+      margin-bottom: 8px;
+    }
+    .dots { display:flex; gap:8px }
+    .d { width:10px; height:10px; border-radius:50% }
+    .d.r{ background:#ff5f57 } .d.y{ background:#ffbd2e } .d.g{ background:#28c840 }
+    .title {
+      font-weight:700; letter-spacing:.6px;
+      text-shadow: 0 0 8px rgba(57,255,20,.45);
+      position: relative; isolation: isolate;
+    }
+    .title span { display:inline-block; animation: glitch 2.2s infinite; }
+    @keyframes glitch {
+      0%,100% { transform: translate(0) }
+      20% { transform: translate(0.6px,-0.6px) }
+      40% { transform: translate(-0.6px,0.6px) }
+      60% { transform: translate(0.4px,0.2px) }
+      80% { transform: translate(-0.4px,-0.2px) }
+    }
+
+    .socialPanel a, .contactPanel a {
+      display:flex; align-items:center; gap:10px;
+      color: var(--fg); text-decoration:none;
+      padding: 10px 12px; border-radius: 12px;
+      border:1px solid rgba(255,255,255,.06); margin: 8px 0;
+      background: linear-gradient(180deg, rgba(57,255,20,.05), rgba(0,229,255,.03));
+      transform: translateY(12px) scale(.98) skewY(1deg);
+      opacity: 0;
+      transition: transform .5s ease, opacity .5s ease, background .25s ease, box-shadow .25s ease;
+      position: relative;
+    }
+    .socialPanel a::before, .contactPanel a::before {
+      content: ">_"; color: var(--accent); opacity: .9;
+      font-weight: 700; letter-spacing:.5px;
+    }
+    .socialPanel.open a, .contactPanel.open a { transform: translateY(0) scale(1); opacity: 1; }
+    .socialPanel.open a:nth-child(2){ transition-delay: .06s }  
+    .socialPanel.open a:nth-child(3){ transition-delay: .12s }  
+    .socialPanel.open a:nth-child(4){ transition-delay: .18s }  
+    .socialPanel.open a:nth-child(5){ transition-delay: .24s }  
+    .socialPanel.open a:nth-child(6){ transition-delay: .30s }  
+
+    .contactPanel.open a:nth-child(2){ transition-delay: .06s }  
+
+    .socialPanel a:hover, .contactPanel a:hover {
+      background: rgba(57,255,20,.10);
+      box-shadow: 0 0 22px rgba(57,255,20,.22);
+    }
+
+    .servicesPanel .modalMsg{ 
+      color: var(--muted);
+      padding: 8px 10px;
+      transform: translateY(12px) scale(.98);
+      opacity: 0;
+      transition: transform .5s ease, opacity .5s ease;
+    }
+    .servicesPanel.open .modalMsg{ 
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .servicesPanel .modalMsg b{ color: var(--accent); }
+
+    .modalBackdrop {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(60% 60% at 50% 50%, rgba(0,229,255,.06), transparent 60%),
+        rgba(0,0,0,0.46);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none; transition: opacity .35s ease;
+      z-index: 1000;
+    }
+    .modalBackdrop.open { opacity: 1; pointer-events: auto; }
+
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease }
+    .reveal.in { opacity: 1; transform: translateY(0) }
+
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .prompt{ display:none } }
+    @media (prefers-reduced-motion: reduce) {
+      .grid-bg::before, .grid-bg::after { animation: none }
+      .type{ border-right:none }
+      .card::after{ display:none }
+      .title span { animation: none }
+    }
+
+    .particle {
+      position: fixed; width: 6px; height: 6px; border-radius: 50%;
+      pointer-events: none; z-index: 1100;
+      background: radial-gradient(circle, var(--accent), rgba(57,255,20,.4) 60%, transparent 70%);
+      animation: pop .6s ease-out forwards;
+    }
+    @keyframes pop {
+      from { transform: translate(0,0) scale(1); opacity: 1; }
+      to   { transform: translate(var(--tx), var(--ty)) scale(0.6); opacity: 0; }
+    }
+a, button { touch-action: manipulation; }
+:focus-visible{ outline: 2px dashed var(--accent-2); outline-offset: 3px; border-radius: 10px; }
+
+@media (hover: none) and (pointer: coarse){
+  .tilt, .tilt:hover { transform: none !important; }
+}
+
+@media (max-width: 720px){
+  .wrap{ padding: 22px 16px 78px; }
+  .navInner{ padding: 10px 12px; gap: 10px; flex-wrap: wrap; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+  .navInner::-webkit-scrollbar{ display: none; }
+  .nav a, .socialBtn{ padding: 10px 12px; }
+  .hero{ gap: 18px; }
+  .termBody{ font-size: 13px; }
+  .thumb{ height: min(54vw, 220px); }
+  .btn{ padding: 12px 14px; }
+  .ctaRow{ gap: 8px; }
+}
+
+@media (max-width: 560px){
+  .hero h1{ font-size: clamp(22px, 7vw, 32px); }
+  .courses{ grid-template-columns: 1fr; }
+  .card{ padding: 12px; }
+  .card h3{ font-size: 16px; }
+  .card p{ font-size: 13px; }
+  .badge{ font-size: 11px; padding: 3px 7px; }
+  #matrix{ opacity: .08; }
+  .socialPanel, .contactPanel, .servicesPanel{ 
+    width: 96vw; max-height: 82vh; overflow: auto; -webkit-overflow-scrolling: touch; top: 50%;
+  }
+}
+
+@media (max-width: 420px){
+  .ctaRow{ flex-direction: column; align-items: stretch; }
+  .ctaRow .btn{ width: 100%; justify-content: center; }
+  .thumb{ height: 48vw; }
+  .ig{ padding: 8px 10px; }
+}
+
+@supports (padding: max(0px)){
+  body{ padding-bottom: max(0px, env(safe-area-inset-bottom)); }
+}
+
+footer{
+  margin-top: 60px;
+  padding: 24px 20px 60px;
+  color: #9ad4b0;
+  border-top: 1px solid var(--card-border);
+  background: radial-gradient(ellipse at 50% -30%, rgba(0,229,255,0.07), transparent 60%);
+}
+.footRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.ig{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--fg);
+  border: 1px solid rgba(255,43,214,.35);
+  box-shadow: 0 6px 12px rgba(255,43,214,.2);
+  line-height: 1.1;             
+}
+.ig svg{
+  display: block;
+  flex: 0 0 auto;               
+}
+.ig span{
+  white-space: nowrap;          
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+.ig:hover{
+  background: rgba(255,43,214,.08);
+  box-shadow: 0 0 22px rgba(255,43,214,.22);
+}
+
+
+@media (max-width: 560px){
+  .footRow{ flex-direction: column; align-items: flex-start; }
+  .ig{ width: 100%; justify-content: center; }
+}
+
+
+footer::after{
+  content: "© 2025 XPERT — Tüm hakları saklıdır.";
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--card-border);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .3px;
+  opacity: .95;
+}
+
+
+@media (max-width: 560px){
+  footer::after{ margin-top: 12px; padding-top: 10px; }
+}
+
+
+.scrollOverlay{
+  pointer-events:none; position:fixed; inset:0; z-index:50; opacity:0; transition:opacity .18s;
+  background:
+    radial-gradient(60% 40% at 50% 0%, rgba(57,255,20,.06), transparent 60%),
+    repeating-linear-gradient(to bottom, rgba(57,255,20,.05), rgba(57,255,20,.05) 2px, transparent 3px);
+  mix-blend-mode: screen;
+}
+.scrollOverlay.on{ opacity:.55; animation: scanSweep .8s ease-out; }
+@keyframes scanSweep{
+  from{ background-position: 0 -40vh, 0 0; }
+  to  { background-position: 0 60vh, 0 0; }
+}
+
+.fx-highlight{ position:relative; }
+.fx-highlight::after{
+  content:""; position:absolute; inset:-6px; border-radius:16px;
+  border:1px solid rgba(57,255,20,.6);
+  box-shadow: 0 0 22px rgba(57,255,20,.35), inset 0 0 12px rgba(0,229,255,.25);
+  animation: fxPulse 1.4s ease-out forwards;
+}
+@keyframes fxPulse{ from{opacity:1} to{opacity:0} }
+
+.reveal.cta{
+    margin:0 0 14px;
+    display:inline-block;
+    background:linear-gradient(90deg,#ff4d4f,#ff8a00,#ffc400,#00d084,#00a2ff,#b620e0,#ff4d4f);
+    background-size:300% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    opacity:0;
+    transform:translateY(8px);
+    animation:
+      fadeUp .8s cubic-bezier(.2,.8,.2,1) forwards,
+      shimmer 10s linear infinite .6s;
+  }
+
+  .reveal.cta::after{
+    content:"";
+    display:block;
+    height:2px;
+    margin-top:6px;
+    background:linear-gradient(90deg,rgba(255,77,79,0),rgba(255,77,79,.9),rgba(0,162,255,0));
+    transform:scaleX(0);
+    transform-origin:left;
+    animation:underlineIn .9s ease-out forwards .8s;
+  }
+
+  .reveal.cta:hover{
+    filter:drop-shadow(0 2px 10px rgba(255,77,79,.25));
+  }
+
+  @keyframes fadeUp{
+    to{opacity:1; transform:translateY(0)}
+  }
+  @keyframes shimmer{
+    0%{background-position:0% 50%}
+    100%{background-position:300% 50%}
+  }
+  @keyframes underlineIn{
+    to{transform:scaleX(1)}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal.cta{animation:none; opacity:1; transform:none}
+    .reveal.cta::after{animation:none; transform:scaleX(1)}
+  }
+
+
+  </style>
+</head>
+<body class="grid-bg scanlines">
+  <canvas id="matrix" aria-hidden="true"></canvas>
+
+  <header class="nav" role="navigation" aria-label="komut çubuğu gezinme">
+    <div class="navInner">
+      <div class="brand" aria-label="site logosu">
+        <span class="dot" aria-hidden="true"></span>
+        <span>>_ EĞITMEN</span>
+      </div>
+      <a href="#home" aria-label="ana sayfa">home</a>
+      <a href="#courses" aria-label="eğitimler">courses</a>
+      <a href="#" id="openContact" aria-label="iletişim">contact</a>
+      <a href="#" id="openServices" aria-label="hizmetlerim">hizmetlerim</a>
+      <a href="whoami.html" target="_blank" rel="noopener" aria-label="hakkımda (whoami)">whoami</a>
+      <a href="#" id="openSocial" class="socialBtn" aria-label="sosyal bağlantılar">social</a>
+      <div class="prompt" aria-hidden="true">
+        <span>$ whoami</span>
+        <b>@xpert</b><span>:~$</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="home" class="hero" aria-label="tanıtım">
+      <div class="reveal">
+        <h1>
+          <span class="type" id="typewriter" aria-label="başlık">Siber Güvenlik Uzmanı & Eğitmen</span>
+        </h1>
+        <p>
+          Etik hacking, Sızma testleri, ağ güvenliği, tersine mühendislik ve Red Team pratikleri. Laboratuvar odaklı, gerçek dünyaya dönük eğitimler.
+        </p>
+        <div class="ctaRow">
+          <a class="btn" href="#courses">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 16L18 6M18 6H9M18 6v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Eğitimleri Gör
+          </a>
+          <a class="btn secondary" href="#contact">İletişim</a>
+        </div>
+      </div>
+
+      <div class="termBox reveal" aria-label="terminal paneli">
+        <div class="termHead"><span class="dotR"></span><span class="dotY"></span><span class="dotG"></span></div>
+        <div class="termBody" id="terminal">
+          <div><b>guest@xpert</b>:~$ nmap -sS -T4 10.0.2.6</div>
+          <div>PORT   STATE SERVICE</div>
+          <div>22/tcp open  ssh</div>
+          <div>80/tcp open  http</div>
+          <div>443/tcp open  https</div>
+          <div style="margin-top:8px"><b>guest@xpert</b>:~$ echo "welcome" | base64</div>
+          <div>d2VsY29tZQ==</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="courses" class="section" aria-label="eğitimler">
+      <h2 class="reveal">> Eğitimler</h2>
+      <p class="reveal cta">Şimdi Instagram’dan DM at, kuponunu kap ve eğitimlere indirimli giriş yap.</p>
+      <div class="courses">
+        <article class="card reveal tilt" data-url="https://linktw.in/tkQvLD" data-tags="Kali Linux,Linux/UNIX,GNU/Linux,Dark Web,GNOM,Ubuntu/Debian,Shell Kullanımı" tabindex="0">
+          <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course1.jpg" alt="course1"></div>
+          <h3>Sıfırdan İleri Seviyeye Kali Linux Eğitimi</h3>
+         <p>Sıfırdan, tamamen uygulamalı ve  güncel: Kali Linux’u kurulumdan temel araçlara ağ/Web testlerine ve terminal pratiklerine kadar adım adım öğrenin.</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/tkQvLD" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+
+
+        <article class="card reveal tilt" data-url="https://linktw.in/TtixMw" data-tags="OSCP/CEH,Network,WI-FI Hack,Post-Exploitation,Web,Recon,OSINT,Sızma Testleri,">
+          <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course2.jpg" alt="course2"></div>
+          <h3>Sıfırdan Ethical Hacking: Recon'dan Exploit'e</h3>
+          <p>Sıfırdan, tamamen uygulamalı ve güncel: Kali Linux, Wi-Fi/Web zafiyetleri, OSINT, Metasploit/SQLi — gerçek senaryolar ve CTF’lerle etik hacker ol.</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/TtixMw" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+
+
+        <article class="card reveal tilt" data-url="https://linktw.in/oxyNcE" data-tags="Reverse Engineering,RAT,Android Hack,Oyun Hackleme,Oyun Mod APK,Android Trojan">
+         <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course3.jpg" alt="course3"></div>
+          <h3>Etik Hacker Eğitimi - Android Telefon & Oyun Hackleme - 2025</h3>
+          <p>Android’de etik mobil güvenlik: APK decompile, Jadx/Apktool ile tersine mühendislik, RAT entegrasyonu, oyun hackleme ve mod APK .</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/oxyNcE" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+
+
+        <article class="card reveal tilt" data-url="https://linktw.in/xVGOri" data-tags="OSCP/CEH,Pivoting,Lateral Movement,Privilege Escalation,Backdoor,Malware,Mythic,Adaptix,Havoc,Sliver,Empire">
+          <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course4.jpg" alt="course4"></div>
+          <h3>İleri Seviye Sızma Testleri & Red Team Eğitimi</h3>
+          <p>Sliver/Mythic/Havoc C2, pivoting–lateral movement, privilege escalation, persistence–exfiltration, BOF ve Empire/PowerShell ile gerçek operasyonlar.İleri Seviye Sızma Testleri</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/xVGOri" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+
+
+        <article class="card reveal tilt" data-url="https://linktw.in/bUvXqH" data-tags="HTB/TRY,OSCP/CEH,Sızma Testleri,Web Sızma Testleri,Windows Hack,CTF,İleri Seviye,Sertifika Sınavlarına Hazırlık">
+          <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course5.jpg" alt="course5"></div>
+          <h3>İleri Seviye Sızma Testleri & CTF Çözümleri</h3>
+          <p>İleri seviye CTF ve sızma testi: HTB/THM üzerinde privilege escalation, web/binary exploitleri (IDOR–SQLi–BOF) ve Impacket–Burp–Ghidra ile gerçek operasyon pratiği.</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/bUvXqH" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+
+
+        <article class="card reveal tilt" data-url="https://linktw.in/nKVXoL" data-tags="Python,Programlama ve Ethical Hacking,Instagram Bot,Whatsapp Bot,Telegram Bot,Python Otomasyon,Kendi Hacking Araçlarını Yaz,">
+          <div class="thumb"><img src="https://raw.githubusercontent.com/cybersecurityxpert/all-my-links/main/images/course6.jpg" alt="course6"></div>
+          <h3>Sıfırdan İleri Seviyeye Python Eğitimi & Etik Hacker Eğitimi</h3>
+          <p>Python’la etik hacking otomasyonu: sıfırdan uygulamalı—agent-server, ARP/Wireshark, Telegram bot, İnstagram bot, Wi-Fi tarama, EXE paketleme—kendi pentest araçlarını yaz.</p>
+          <div class="badges"></div>
+          <div class="ctaRow">
+            <a class="btn" href="https://linktw.in/nKVXoL" target="_blank" rel="noopener">Udemy'de Aç</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" aria-label="iletişim">
+    <div class="footRow">
+      <div>
+        <strong>> İletişim</strong>
+        <div style="color:var(--muted)">Soru ve işbirliği için Instagram'dan yazabilirsiniz</div>
+      </div>
+      <a class="ig" href="https://www.instagram.com/savash.ai/" target="_blank" rel="noopener" aria-label="instagram profili">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+        <span>@savash.ai</span>
+      </a>
+    </div>
+  </footer>
+
+  <div id="socialPanel" class="socialPanel" aria-label="sosyal medya bağlantıları">
+    <div class="socialHead">
+      <div class="dots"><span class="d r"></span><span class="d y"></span><span class="d g"></span></div>
+      <div class="title"><span>>_ SOCIAL</span></div>
+    </div>
+    <a href="https://www.instagram.com/savash.ai/" target="_blank" rel="noopener" title="Instagram">
+      <span>Instagram</span>
+    </a>
+    <a href="https://github.com/savashxpert" target="_blank" rel="noopener" title="GitHub">
+      <span>GitHub</span>
+    </a>
+    <a href="https://discord.gg/kHuubUYsGJ" target="_blank" rel="noopener" title="Discord">
+      <span>Discord</span>
+    </a>
+    <a href="https://youtube.com/@critical_xpert" target="_blank" rel="noopener" title="Critical Xpert Youtube">
+      <span>Critical Xpert Youtube</span>
+    </a>
+    <a href="https://youtube.com/@siber_xpert" target="_blank" rel="noopener" title="Siber Xpert Youtube">
+      <span>Siber Xpert Youtube</span>
+    </a>
+  </div>
+
+  <div id="contactPanel" class="contactPanel" aria-label="iletişim seçenekleri">
+    <div class="socialHead">
+      <div class="dots"><span class="d r"></span><span class="d y"></span><span class="d g"></span></div>
+      <div class="title"><span>>_ CONTACT</span></div>
+    </div>
+    <a href="https://www.instagram.com/savash.ai/" target="_blank" rel="noopener" title="Instagram DM">
+      <span>Instagram DM</span>
+    </a>
+  </div>
+
+  <div id="servicesPanel" class="servicesPanel" aria-label="hizmetlerim penceresi">
+    <div class="socialHead">
+      <div class="dots"><span class="d r"></span><span class="d y"></span><span class="d g"></span></div>
+      <div class="title"><span>>_ SERVICES</span></div>
+    </div>
+    <div class="modalMsg">
+      🚧 <b>Hizmetlerim</b> bölümü hazırlanıyor. Çok yakında denetim, pentest ve danışmanlık paketleri burada olacak.
+    </div>
+  </div>
+
+  <div id="modalBackdrop" class="modalBackdrop" aria-hidden="true"></div>
+
+  <script>
+    (function typewriter(){
+      const el = document.getElementById('typewriter');
+      const full = 'Siber Güvenlik Uzmanı & Eğitmen';
+      let i = 0; el.textContent = '';
+      const speed = 68; 
+      const tick = () => {
+        el.textContent = full.slice(0, i++) + (i % 2 ? '|' : '');
+        if (i <= full.length) setTimeout(tick, speed);
+        else el.textContent = full;
+      };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = full; return; }
+      setTimeout(tick, speed);
+    })();
+
+    (function matrix(){
+      const c = document.getElementById('matrix');
+      const ctx = c.getContext('2d');
+
+      const chars = '01あァかサたナはマヤラガザダバパイゥきシちニひミりギジヂビピウウェくスつヌふムゆルグズヅブプエォけセてネへメレゲゼデベペオコソトノホモヨロゴゾドボポ'.split('');
+      const fontSize = 14;
+
+      let columns, drops;
+
+      function resize(){
+        c.width = innerWidth;
+        c.height = innerHeight;
+        columns = Math.floor(c.width / fontSize);
+        drops = Array(columns).fill(1);
+      }
+
+      addEventListener('resize', resize);
+      resize();
+
+      function draw(){
+        ctx.fillStyle = 'rgba(10,15,10,0.08)';
+        ctx.fillRect(0,0,c.width,c.height);
+        ctx.fillStyle = '#39ff14';
+        ctx.font = fontSize + 'px monospace';
+        for(let i=0; i<drops.length; i++){
+          const text = chars[Math.floor(Math.random()*chars.length)];
+          ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+          if(drops[i]*fontSize > c.height && Math.random() > 0.975){ drops[i] = 0; }
+          drops[i]++;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    document.querySelectorAll('.card').forEach(card => {
+      const url = card.getAttribute('data-url');
+      const tags = (card.getAttribute('data-tags') || '').split(',').map(s => s.trim()).filter(Boolean);
+      const badges = card.querySelector('.badges');
+      tags.forEach(t => {
+        const b = document.createElement('span'); b.className = 'badge'; b.textContent = t; badges.appendChild(b);
+      });
+      const btn = card.querySelector('.btn');
+      const go = () => { if (url) window.open(url, '_blank', 'noopener'); }
+      card.addEventListener('click', e => { if (e.target.closest('.btn')) return; go(); });
+      card.addEventListener('keypress', e => { if (e.key === 'Enter') go(); });
+    });
+
+    (function reveal(){
+      const els = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: .18 });
+      els.forEach(e=> io.observe(e));
+    })();
+
+    (function tilt(){
+      const max = 8; const cards = document.querySelectorAll('.tilt');
+      cards.forEach(card =>{
+        card.addEventListener('mousemove', e=>{
+          const r = card.getBoundingClientRect();
+          const x = e.clientX - r.left; const y = e.clientY - r.top;
+          const rx = ((y / r.height) - .5) * -max; 
+          const ry = ((x / r.width) - .5) * max;
+          card.style.transform = `perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        });
+        card.addEventListener('mouseleave', ()=>{ card.style.transform = 'translateY(0)'; });
+      });
+    })();
+
+    (function modals(){
+      const backdrop = document.getElementById('modalBackdrop');
+      const panels = {
+        social: document.getElementById('socialPanel'),
+        contact: document.getElementById('contactPanel'),
+        services: document.getElementById('servicesPanel') 
+      };
+      const buttons = {
+        social: document.getElementById('openSocial'),
+        contact: document.getElementById('openContact'),
+        services: document.getElementById('openServices')  
+      };
+      let current = null;
+
+      function particleBurst(x, y, count = 16, radius = 110) {
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('span');
+          p.className = 'particle';
+          const angle = (Math.PI * 2) * (i / count) + Math.random() * 0.6;
+          const r = radius * (0.5 + Math.random() * 0.6);
+          const tx = Math.cos(angle) * r;
+          const ty = Math.sin(angle) * r;
+          p.style.left = x + 'px';
+          p.style.top  = y + 'px';
+          p.style.setProperty('--tx', tx + 'px');
+          p.style.setProperty('--ty', ty + 'px');
+          document.body.appendChild(p);
+          setTimeout(()=> p.remove(), 700);
+        }
+      }
+
+      function openPanel(which, ev) {
+        const panel = panels[which]; const btn = buttons[which];
+        if (!panel) return;
+
+        Object.values(panels).forEach(p => p && p.classList.remove('open'));
+       
+        panel.classList.add('open');
+        backdrop.classList.add('open');
+        current = which;
+
+        if (ev && btn) {
+          const rect = btn.getBoundingClientRect();
+          particleBurst(rect.left + rect.width/2, rect.top + rect.height/2);
+        }
+      }
+
+      function closePanel() {
+        if (!current) return;
+        panels[current].classList.remove('open');
+        backdrop.classList.remove('open');
+        current = null;
+      }
+
+      if (buttons.social) buttons.social.addEventListener('click', (e)=>{ e.preventDefault(); openPanel('social', e); });
+      if (buttons.contact) buttons.contact.addEventListener('click', (e)=>{ e.preventDefault(); openPanel('contact', e); });
+      if (buttons.services) buttons.services.addEventListener('click', (e)=>{ e.preventDefault(); openPanel('services', e); }); 
+
+      backdrop.addEventListener('click', closePanel);
+      addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closePanel(); });
+    })();
+
+    
+    
+    (function bursts(){
+      function particleBurstGlobal(x, y, count = 14, radius = 100) {
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('span');
+          p.className = 'particle';
+          const angle = (Math.PI * 2) * (i / count) + Math.random() * 0.6;
+          const r = radius * (0.5 + Math.random() * 0.6);
+          const tx = Math.cos(angle) * r;
+          const ty = Math.sin(angle) * r;
+          p.style.left = x + 'px';
+          p.style.top  = y + 'px';
+          p.style.setProperty('--tx', tx + 'px');
+          p.style.setProperty('--ty', ty + 'px');
+          document.body.appendChild(p);
+          setTimeout(()=> p.remove(), 700);
+        }
+      }
+      
+      window.particleBurst = particleBurstGlobal;
+
+      function addBurst(selector){
+        document.querySelectorAll(selector).forEach(el=>{
+          el.addEventListener('click', (e)=>{
+            if (el.id === 'openSocial' || el.id === 'openContact' || el.id === 'openServices') return; 
+            let x = e.clientX, y = e.clientY;
+            if (!x && !y) { 
+              const r = el.getBoundingClientRect();
+              x = r.left + r.width/2; y = r.top + r.height/2;
+            }
+            particleBurstGlobal(x, y, 14, 100);
+          });
+        });
+      }
+
+      addBurst('.btn');
+      addBurst('.ig');
+
+
+      document.querySelectorAll('.navInner a').forEach(a=>{
+        if (a.id === 'openSocial' || a.id === 'openContact' || a.id === 'openServices') return; 
+        a.addEventListener('click', (e)=>{
+          let x = e.clientX, y = e.clientY;
+          if (!x && !y) { const r = a.getBoundingClientRect(); x = r.left + r.width/2; y = r.top + r.height/2; }
+          particleBurstGlobal(x, y, 12, 90);
+        });
+      });
+
+      document.querySelectorAll('.card').forEach(card=>{
+        card.addEventListener('click', (e)=>{
+          if (e.target.closest('.btn')) return; 
+          let x = e.clientX, y = e.clientY;
+          if (!x && !y) { const r = card.getBoundingClientRect(); x = r.left + r.width/2; y = r.top + r.height/2; }
+          particleBurstGlobal(x, y, 16, 110);
+        });
+      });
+    })();
+
+
+   
+    (function promptCursor(){
+      const prompt = document.querySelector('.prompt b');
+      if (!prompt) return;
+      let on = true; setInterval(()=>{ prompt.style.textDecoration = on ? 'underline' : 'none'; on = !on; }, 600);
+    })();
+
+  
+(function hackerScroll(){
+  
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+
+  const overlay = document.createElement('div');
+  overlay.className = 'scrollOverlay';
+  document.body.appendChild(overlay);
+
+  const matrix = document.getElementById('matrix');
+  const nav = document.querySelector('.nav');
+
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+  function scrollToHash(hash){
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    const startY = window.scrollY || window.pageYOffset;
+    const headerOffset = (nav ? nav.offsetHeight : 0) + 6; 
+    const endY = Math.max(0, target.getBoundingClientRect().top + startY - headerOffset);
+    const distance = endY - startY;
+
+    const duration = Math.min(1200, Math.max(500, Math.abs(distance) * 0.6));
+    const start = performance.now();
+
+    overlay.classList.add('on');
+    if (matrix) matrix.style.opacity = 0.18; 
+
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      const k = easeOutCubic(t);
+      window.scrollTo(0, startY + distance * k);
+      if (t < 1){
+        requestAnimationFrame(step);
+      } else {
+     
+        overlay.classList.remove('on');
+        if (matrix) matrix.style.opacity = '';
+        const hi = target.querySelector('h2') || target;
+        hi.classList.add('fx-highlight');
+        setTimeout(()=> hi.classList.remove('fx-highlight'), 1400);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    const id = a.id;
+    if (id === 'openSocial' || id === 'openContact' || id === 'openServices') return; 
+    const hash = a.getAttribute('href');
+    if (!hash || hash.length <= 1) return;
+
+    a.addEventListener('click', function(e){
+      const target = document.querySelector(hash);
+      if (!target) return; 
+      e.preventDefault();
+      scrollToHash(hash);
+    });
+  });
+})();
+
+
+(function contactAnchorToModal(){
+  const backdrop = document.getElementById('modalBackdrop');
+  const contactPanel = document.getElementById('contactPanel');
+  const socialPanel  = document.getElementById('socialPanel');
+  if (!backdrop || !contactPanel) return;
+
+  function openFrom(el){
+   
+    if (socialPanel) socialPanel.classList.remove('open');
+   
+    contactPanel.classList.add('open');
+    backdrop.classList.add('open');
+
+  
+    if (window.particleBurst && el){
+      const r = el.getBoundingClientRect();
+      window.particleBurst(r.left + r.width/2, r.top + r.height/2, 16, 110);
+    }
+  }
+
+
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href="#contact"]');
+    if (!a) return;
+    e.preventDefault();
+    e.stopImmediatePropagation(); 
+    openFrom(a);
+  }, true); 
+})();
+
+(function modalHardClose(){
+  const backdrop = document.getElementById('modalBackdrop');
+  const social   = document.getElementById('socialPanel');
+  const contact  = document.getElementById('contactPanel');
+  const services = document.getElementById('servicesPanel'); 
+  if (!backdrop) return;
+
+  function hardClose(){
+    if (social)  social.classList.remove('open');
+    if (contact) contact.classList.remove('open');
+    if (services) services.classList.remove('open'); 
+    backdrop.classList.remove('open');
+  }
+
+  backdrop.addEventListener('click', hardClose);
+
+  addEventListener('keydown', (e)=>{ if (e.key === 'Escape') hardClose(); });
+})();
+
+
+
+  </script>
+</body>
+</html>
